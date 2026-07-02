@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CivicCraft — Ward &amp; constituency websites for councillors and MPs</title>
+<meta name="description" content="CivicCraft builds auto-updating ward and constituency websites that help councillors and MPs stay connected with local residents. Built for every party — and none.">
+<link rel="icon" type="image/png" href="assets/civiccraft-logo.png">
+<meta property="og:title" content="CivicCraft — websites that connect representatives with residents">
+<meta property="og:description" content="Auto-updating ward and constituency websites: council news, policing data, planning applications, casework and more.">
+<meta property="og:image" content="assets/civiccraft-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy-deep:#0B1830;
+  --navy:#122448;
+  --navy-panel:#16294F;
+  --navy-line:#24406F;
+  --teal:#1FA79B;
+  --teal-soft:#2BC4B6;
+  --blue:#2E6FE8;
+  --blue-soft:#5B8FF2;
+  --gold:#E4B25C;
+  --ink:#EDF2FB;
+  --muted:#A7B7D4;
+  --radius:18px;
+  --display:'Bricolage Grotesque',system-ui,sans-serif;
+  --body:'Instrument Sans',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body);
+  background:var(--navy-deep);
+  color:var(--ink);
+  line-height:1.6;
+  overflow-x:hidden;
+}
+img{max-width:100%;display:block}
+a{color:var(--teal-soft)}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:6px}
+
+/* ---------- header ---------- */
+header{
+  position:sticky;top:0;z-index:50;
+  background:rgba(11,24,48,.85);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--navy-line);
+}
+.nav{
+  max-width:1120px;margin:0 auto;padding:.7rem 1.25rem;
+  display:flex;align-items:center;gap:1rem;
+}
+.brand{display:flex;align-items:center;gap:.65rem;text-decoration:none}
+.brand img{width:44px;height:44px;border-radius:50%}
+.brand span{
+  font-family:var(--display);font-weight:800;font-size:1.25rem;letter-spacing:-.01em;
+}
+.brand .c1{color:#fff}.brand .c2{color:var(--teal-soft)}
+nav.links{margin-left:auto;display:flex;gap:1.4rem;align-items:center}
+nav.links a{
+  color:var(--muted);text-decoration:none;font-weight:500;font-size:.95rem;
+}
+nav.links a:hover{color:#fff}
+.btn{
+  display:inline-block;text-decoration:none;font-weight:600;
+  padding:.7rem 1.35rem;border-radius:999px;font-size:.98rem;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn-teal{background:var(--teal);color:#06201d;box-shadow:0 6px 18px rgba(31,167,155,.35)}
+.btn-ghost{border:1.5px solid var(--navy-line);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--teal)}
+@media(max-width:720px){nav.links a:not(.btn){display:none}}
+
+/* ---------- hero ---------- */
+.hero{
+  max-width:1120px;margin:0 auto;padding:4.5rem 1.25rem 2rem;
+  display:grid;grid-template-columns:1.05fr .95fr;gap:3rem;align-items:center;
+}
+@media(max-width:900px){.hero{grid-template-columns:1fr;padding-top:3rem}}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold);font-weight:600;margin-bottom:1.1rem;
+}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--gold);display:inline-block}
+h1{
+  font-family:var(--display);font-weight:800;
+  font-size:clamp(2.4rem,5.2vw,3.9rem);
+  line-height:1.05;letter-spacing:-.02em;margin-bottom:1.2rem;
+}
+h1 .hl-blue{color:var(--blue-soft)}
+h1 .hl-teal{color:var(--teal-soft)}
+.hero p.lede{color:var(--muted);font-size:1.15rem;max-width:34rem;margin-bottom:1.8rem}
+.hero-ctas{display:flex;gap:.9rem;flex-wrap:wrap}
+.hero-note{margin-top:1.1rem;font-size:.88rem;color:var(--muted)}
+.hero-note a{color:var(--muted)}
+
+/* the signature: a live-feeling conversation between resident and councillor */
+.chat{
+  background:linear-gradient(180deg,var(--navy-panel),var(--navy));
+  border:1px solid var(--navy-line);border-radius:22px;
+  padding:1.4rem 1.3rem 1.6rem;position:relative;
+  box-shadow:0 24px 60px rgba(0,0,0,.45);
+}
+.chat-head{
+  display:flex;align-items:center;gap:.6rem;
+  padding-bottom:.9rem;margin-bottom:1rem;
+  border-bottom:1px dashed var(--navy-line);
+  font-size:.85rem;color:var(--muted);
+}
+.chat-head .dot{width:9px;height:9px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--teal)}
+.bubble{
+  max-width:82%;padding:.75rem 1rem;border-radius:16px;
+  margin-bottom:.85rem;font-size:.95rem;line-height:1.45;
+  opacity:0;transform:translateY(10px);
+  animation:pop .5s ease forwards;
+}
+.bubble small{display:block;font-size:.72rem;opacity:.75;margin-top:.3rem}
+.from-resident{background:var(--blue);color:#fff;border-bottom-left-radius:4px}
+.from-rep{background:var(--teal);color:#04211e;border-bottom-right-radius:4px;margin-left:auto;text-align:left}
+.from-site{
+  background:var(--navy-deep);border:1px solid var(--navy-line);color:var(--ink);
+  margin:0 auto .85rem;text-align:center;max-width:92%;font-size:.88rem;
+}
+.from-site b{color:var(--gold)}
+.bubble:nth-of-type(1){animation-delay:.3s}
+.bubble:nth-of-type(2){animation-delay:1.1s}
+.bubble:nth-of-type(3){animation-delay:1.9s}
+.bubble:nth-of-type(4){animation-delay:2.7s}
+@keyframes pop{to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){
+  .bubble{animation:none;opacity:1;transform:none}
+  .btn:hover{transform:none}
+  html{scroll-behavior:auto}
+}
+
+/* ---------- skyline divider ---------- */
+.skyline{display:block;width:100%;height:auto;margin-top:2.5rem}
+.skyline .win{fill:var(--gold);opacity:.9}
+@media(prefers-reduced-motion:no-preference){
+  .skyline .win{animation:twinkle 4s ease-in-out infinite}
+  .skyline .win:nth-child(3n){animation-delay:1.3s}
+  .skyline .win:nth-child(4n){animation-delay:2.2s}
+}
+@keyframes twinkle{0%,100%{opacity:.9}50%{opacity:.35}}
+
+/* ---------- sections ---------- */
+section{max-width:1120px;margin:0 auto;padding:4.5rem 1.25rem}
+.sec-head{max-width:44rem;margin-bottom:2.6rem}
+h2{
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(1.7rem,3.4vw,2.4rem);letter-spacing:-.015em;
+  line-height:1.15;margin:.4rem 0 .8rem;
+}
+.sec-head p{color:var(--muted);font-size:1.06rem}
+
+/* features */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+.card{
+  background:var(--navy);border:1px solid var(--navy-line);
+  border-radius:var(--radius);padding:1.5rem 1.4rem;
+  transition:border-color .2s ease, transform .2s ease;
+}
+.card:hover{border-color:var(--teal);transform:translateY(-3px)}
+.card .ico{
+  width:44px;height:44px;border-radius:12px;display:grid;place-items:center;
+  font-size:1.3rem;margin-bottom:1rem;
+  background:rgba(31,167,155,.14);border:1px solid rgba(31,167,155,.4);
+}
+.card:nth-child(even) .ico{background:rgba(46,111,232,.16);border-color:rgba(46,111,232,.45)}
+.card h3{font-family:var(--display);font-weight:600;font-size:1.12rem;margin-bottom:.45rem}
+.card p{color:var(--muted);font-size:.94rem}
+.card .src{display:block;margin-top:.7rem;font-size:.78rem;color:var(--gold);letter-spacing:.02em}
+
+/* case study */
+.case{
+  background:linear-gradient(135deg,var(--navy-panel),var(--navy) 60%);
+  border:1px solid var(--navy-line);border-radius:24px;
+  padding:2.6rem;display:grid;grid-template-columns:1.1fr .9fr;gap:2.5rem;align-items:center;
+}
+@media(max-width:860px){.case{grid-template-columns:1fr;padding:1.8rem}}
+.case .tag{
+  display:inline-block;background:rgba(228,178,92,.14);border:1px solid rgba(228,178,92,.5);
+  color:var(--gold);font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  padding:.3rem .8rem;border-radius:999px;margin-bottom:1rem;
+}
+.case h2{margin-top:0}
+.case p{color:var(--muted);margin-bottom:1rem}
+.case ul{list-style:none;margin:1.2rem 0 1.6rem}
+.case li{
+  padding-left:1.6rem;position:relative;color:var(--ink);
+  margin-bottom:.55rem;font-size:.97rem;
+}
+.case li::before{content:"✓";position:absolute;left:0;color:var(--teal-soft);font-weight:700}
+.mini-site{
+  background:var(--navy-deep);border:1px solid var(--navy-line);border-radius:16px;
+  overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.4);font-size:.8rem;
+}
+.mini-bar{
+  background:var(--navy-panel);padding:.55rem .9rem;display:flex;gap:.4rem;align-items:center;
+  border-bottom:1px solid var(--navy-line);color:var(--muted);
+}
+.mini-bar i{width:9px;height:9px;border-radius:50%;background:var(--navy-line);display:inline-block}
+.mini-bar span{margin-left:.5rem;font-style:normal}
+.mini-body{padding:1rem}
+.mini-title{font-family:var(--display);font-weight:700;color:#fff;font-size:.95rem;margin-bottom:.6rem}
+.mini-row{
+  display:flex;justify-content:space-between;gap:.8rem;
+  background:var(--navy);border:1px solid var(--navy-line);border-radius:9px;
+  padding:.55rem .7rem;margin-bottom:.5rem;color:var(--muted);
+}
+.mini-row b{color:var(--ink);font-weight:600}
+.mini-row .pill{color:var(--teal-soft);white-space:nowrap}
+.mini-row .pill.g{color:var(--gold)}
+
+/* neutrality */
+.neutral{
+  text-align:center;border:1px solid var(--navy-line);border-radius:24px;
+  padding:3.2rem 1.5rem;
+  background:
+    radial-gradient(600px 200px at 50% 0%,rgba(46,111,232,.12),transparent),
+    radial-gradient(600px 200px at 50% 100%,rgba(31,167,155,.12),transparent),
+    var(--navy);
+}
+.neutral h2{max-width:34rem;margin:0 auto .9rem}
+.neutral p{color:var(--muted);max-width:40rem;margin:0 auto 1.6rem}
+.rosettes{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap}
+.rosette{
+  width:34px;height:34px;border-radius:50%;
+  border:3px solid var(--navy-deep);box-shadow:0 0 0 1px var(--navy-line);
+}
+.rosettes figcaption, .rosette-cap{font-size:.82rem;color:var(--muted);margin-top:1rem}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem}
+@media(max-width:800px){.steps{grid-template-columns:1fr}}
+.step{
+  border-left:3px solid var(--teal);padding:1.2rem 1.3rem;
+  background:var(--navy);border-radius:0 var(--radius) var(--radius) 0;
+}
+.step:nth-child(2){border-color:var(--blue)}
+.step:nth-child(3){border-color:var(--gold)}
+.step .n{
+  font-family:var(--display);font-weight:800;font-size:.85rem;
+  color:var(--gold);letter-spacing:.12em;text-transform:uppercase;
+}
+.step h3{font-family:var(--display);font-weight:600;font-size:1.1rem;margin:.35rem 0 .4rem}
+.step p{color:var(--muted);font-size:.94rem}
+
+/* contact */
+.contact{
+  text-align:center;padding-bottom:5rem;
+}
+.contact .chat-cta{
+  display:inline-flex;flex-direction:column;gap:.6rem;margin-top:1.6rem;
+}
+.contact .bubble{opacity:1;transform:none;animation:none;margin:0 auto}
+
+/* footer */
+footer{
+  border-top:1px solid var(--navy-line);
+  padding:2.2rem 1.25rem 2.8rem;color:var(--muted);font-size:.88rem;
+}
+.foot-in{max-width:1120px;margin:0 auto;display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap}
+.foot-in img{width:38px;height:38px;border-radius:50%}
+.foot-in .right{margin-left:auto;text-align:right}
+@media(max-width:640px){.foot-in .right{margin-left:0;text-align:left}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a class="brand" href="#top" aria-label="CivicCraft home">
+      <img src="assets/civiccraft-logo.png" alt="CivicCraft logo — Westminster at night with speech bubbles">
+      <span><span class="c1">Civic</span><span class="c2">Craft</span></span>
+    </a>
+    <nav class="links" aria-label="Main">
+      <a href="#build">What we build</a>
+      <a href="#work">Our work</a>
+      <a href="#how">How it works</a>
+      <a class="btn btn-teal" href="#contact">Start a conversation</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div>
+      <span class="eyebrow">Websites for councillors &amp; MPs</span>
+      <h1>Where <span class="hl-blue">residents</span> and their <span class="hl-teal">representatives</span> actually talk.</h1>
+      <p class="lede">CivicCraft builds ward and constituency websites that update themselves — council news, policing data, planning applications, local events and casework, all in one place your residents can trust.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-teal" href="https://www.lowerstoke.co.uk/" target="_blank" rel="noopener">See a live ward site →</a>
+        <a class="btn btn-ghost" href="#build">What's included</a>
+      </div>
+      <p class="hero-note">Built for every party — and none. <a href="#neutral">Read our neutrality promise.</a></p>
+    </div>
+
+    <div class="chat" role="img" aria-label="Example conversation: a resident reports a broken streetlight through their ward website, the site logs it as casework, and the councillor replies that it has been raised with the council.">
+      <div class="chat-head"><span class="dot"></span> yourward.co.uk — live</div>
+      <div class="bubble from-resident">The streetlight outside the post office has been out for a week — it's really dark on the corner.<small>Resident · via Report an Issue</small></div>
+      <div class="bubble from-site">Logged to the <b>casework tracker</b> · Ref&nbsp;#0142 · Your councillors have been notified</div>
+      <div class="bubble from-rep">Thanks for flagging this — I've reported it to the council's highways team today and I'll update the tracker when it's fixed.<small>Your local councillor</small></div>
+      <div class="bubble from-site"><b>Update:</b> Ref #0142 marked resolved · Streetlight repaired ✓</div>
+    </div>
+  </div>
+
+  <!-- skyline divider -->
+  <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
+    <path fill="#0E1D3A" d="M0,120 L0,78 L40,78 L40,60 L70,60 L70,80 L120,80 L120,52 L135,42 L150,52 L150,84 L210,84 L210,64 L260,64 L260,88 L320,88 L320,46 L332,34 L344,46 L344,88 L400,88 L400,70 L460,70 L460,90 L520,90 L520,40 L540,24 L560,40 L560,90 L620,90 L620,72 L690,72 L690,86 L740,86 L740,58 L755,48 L770,58 L770,86 L840,86 L840,66 L900,66 L900,90 L950,90 L950,30 L965,14 L980,30 L980,90 L1040,90 L1040,74 L1100,74 L1100,86 L1160,86 L1160,68 L1200,68 L1200,120 Z"/>
+    <g class="wins">
+      <rect class="win" x="52" y="66" width="4" height="5"/><rect class="win" x="130" y="58" width="4" height="5"/>
+      <rect class="win" x="225" y="70" width="4" height="5"/><rect class="win" x="245" y="70" width="4" height="5"/>
+      <rect class="win" x="330" y="55" width="4" height="5"/><rect class="win" x="415" y="76" width="4" height="5"/>
+      <rect class="win" x="435" y="76" width="4" height="5"/><rect class="win" x="535" y="48" width="4" height="5"/>
+      <rect class="win" x="545" y="60" width="4" height="5"/><rect class="win" x="640" y="78" width="4" height="5"/>
+      <rect class="win" x="660" y="78" width="4" height="5"/><rect class="win" x="750" y="66" width="4" height="5"/>
+      <rect class="win" x="855" y="72" width="4" height="5"/><rect class="win" x="875" y="72" width="4" height="5"/>
+      <rect class="win" x="958" y="38" width="4" height="5"/><rect class="win" x="966" y="50" width="4" height="5"/>
+      <rect class="win" x="1055" y="80" width="4" height="5"/><rect class="win" x="1170" y="74" width="4" height="5"/>
+    </g>
+  </svg>
+
+  <!-- FEATURES -->
+  <section id="build">
+    <div class="sec-head">
+      <span class="eyebrow">What we build</span>
+      <h2>One website. Everything your residents ask you about.</h2>
+      <p>Every CivicCraft site pulls information straight from official sources and refreshes automatically every day — so your page is never out of date, even when you're busy.</p>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="ico">📰</div><h3>Live council news</h3><p>The latest announcements from your council, fetched automatically so residents see them the day they're published.</p><span class="src">Source: your council website</span></div>
+      <div class="card"><div class="ico">🏗️</div><h3>Planning applications</h3><p>Current applications in your ward, pulled from the council planning portal — the question residents ask most, answered before they ask.</p><span class="src">Source: council planning portal</span></div>
+      <div class="card"><div class="ico">🛡️</div><h3>Policing &amp; safety</h3><p>Neighbourhood crime priorities, your local officers and upcoming PACT meetings, straight from police data.</p><span class="src">Source: police.uk &amp; local force</span></div>
+      <div class="card"><div class="ico">📋</div><h3>Report an issue</h3><p>A simple form residents use to raise problems — potholes, fly-tipping, streetlights — logged straight into your casework tracker.</p><span class="src">Direct to you, nothing lost in an inbox</span></div>
+      <div class="card"><div class="ico">✅</div><h3>Public casework log</h3><p>Show the work. Residents see what's been raised, what you're doing about it, and what's been resolved.</p><span class="src">Accountability, made visible</span></div>
+      <div class="card"><div class="ico">📅</div><h3>Meetings &amp; events</h3><p>Council and committee meetings, community events and surgery times — one calendar for the whole ward.</p><span class="src">Source: council calendars &amp; local listings</span></div>
+    </div>
+  </section>
+
+  <!-- CASE STUDY -->
+  <section id="work">
+    <div class="case">
+      <div>
+        <span class="tag">Live site · Coventry</span>
+        <h2>Lower Stoke Ward Newsletter</h2>
+        <p>Our first build serves three ward councillors and their residents in Coventry. It refreshes itself every morning at 8am — no maintenance, no stale pages.</p>
+        <ul>
+          <li>Council news, planning and police data updated daily</li>
+          <li>Report-an-issue form feeding a public casework log</li>
+          <li>Surgery times, PACT meetings and community events</li>
+          <li>Councillor contact details, always one tap away</li>
+        </ul>
+        <a class="btn btn-teal" href="https://www.lowerstoke.co.uk/" target="_blank" rel="noopener">Visit lowerstoke.co.uk →</a>
+      </div>
+      <div class="mini-site" aria-hidden="true">
+        <div class="mini-bar"><i></i><i></i><i></i><span>lowerstoke.co.uk</span></div>
+        <div class="mini-body">
+          <div class="mini-title">🏘️ Lower Stoke Ward Newsletter</div>
+          <div class="mini-row"><span><b>Street surgery</b> · Sat 10–11am</span><span class="pill g">This week</span></div>
+          <div class="mini-row"><span><b>Council news</b> · 3 new stories</span><span class="pill">Updated today</span></div>
+          <div class="mini-row"><span><b>Planning</b> · 5 applications in ward</span><span class="pill">Live</span></div>
+          <div class="mini-row"><span><b>Casework</b> · Ref #0142 resolved</span><span class="pill">✓ Done</span></div>
+          <div class="mini-row"><span><b>PACT meeting</b> · Community centre</span><span class="pill g">Thu 7pm</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEUTRALITY -->
+  <section id="neutral">
+    <div class="neutral">
+      <span class="eyebrow" style="justify-content:center;display:inline-flex">Our promise</span>
+      <h2>Built for every party — and none.</h2>
+      <p>Good local information isn't political. We build for councillors and MPs of any party, and for independents, in exactly the same way: official sources, plain English, and your own colours. The rosette is yours; the craft is ours.</p>
+      <div class="rosettes" aria-label="Sites themed in any party colour: red, blue, yellow, green, teal, purple or neutral grey">
+        <span class="rosette" style="background:#d64550"></span>
+        <span class="rosette" style="background:#2e6fe8"></span>
+        <span class="rosette" style="background:#e8b93c"></span>
+        <span class="rosette" style="background:#3fa25c"></span>
+        <span class="rosette" style="background:#1fa79b"></span>
+        <span class="rosette" style="background:#8e5bd1"></span>
+        <span class="rosette" style="background:#98a3b8"></span>
+      </div>
+      <p class="rosette-cap">Your site, in your colours — whatever they are.</p>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="sec-head">
+      <span class="eyebrow">How it works</span>
+      <h2>From first chat to live site — without the jargon.</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="n">Step one</span><h3>We talk about your ward</h3><p>A short conversation about your patch: your council, your surgeries, what residents contact you about most. No technical knowledge needed.</p></div>
+      <div class="step"><span class="n">Step two</span><h3>We build and connect</h3><p>We craft your site, wire it up to official council, planning and police sources, and set up your report-an-issue form and casework log.</p></div>
+      <div class="step"><span class="n">Step three</span><h3>It updates itself</h3><p>Your site refreshes daily on its own. You reply to residents and update casework — we handle everything technical behind the scenes.</p></div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="contact">
+    <span class="eyebrow" style="display:inline-flex">Get started</span>
+    <h2>Ready to open the conversation with your residents?</h2>
+    <p style="color:var(--muted);max-width:36rem;margin:0 auto">Tell us your ward or constituency and we'll show you what your site could look like — usually within a week.</p>
+    <div class="chat-cta">
+      <a class="btn btn-teal" href="mailto:hello@civiccraft.co.uk?subject=New%20ward%20website%20enquiry">✉️ hello@civiccraft.co.uk</a>
+      <a class="btn btn-ghost" href="https://www.lowerstoke.co.uk/" target="_blank" rel="noopener">Or explore our live work first</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot-in">
+    <img src="assets/civiccraft-logo.png" alt="">
+    <div>
+      <strong style="color:var(--ink)">CivicCraft</strong> · civiccraft.co.uk<br>
+      Making it easy for civic representatives to communicate with constituents.
+    </div>
+    <div class="right">
+      Serving councillors, MPs and independents across the UK.<br>
+      © 2026 CivicCraft. All parties welcome.
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
